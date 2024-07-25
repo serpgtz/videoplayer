@@ -3,18 +3,22 @@ import * as videoService from './videoService';
 import { Video } from './video';
 import VideoItem from './VideoItem';
 
-const VideosList = () => {
+interface VideosListProps {
+  searchQuery: string;
+}
+
+const VideosList: React.FC<VideosListProps> = ({ searchQuery }) => {
   type ErrorWork = {
     message: string;
   };
 
   const [videos, setVideos] = useState<Video[]>([]);
   const [errorNetwork, setErrorNetwork] = useState<ErrorWork | null>(null);
-  const [playingVideoId, setPlayingVideoId] = useState<string | undefined>(undefined); // ID del video en reproducción
+  const [playingVideoId, setPlayingVideoId] = useState<string | undefined>(undefined);
 
-  const loadVideos = async () => {
+  const loadVideos = async (search: string = "") => {
     try {
-      const res = await videoService.getVideos();
+      const res = await videoService.getVideos(search);
       if (!res.data.length) throw new Error('Falla en Servidor');
       setVideos(res.data);
     } catch (error) {
@@ -27,8 +31,8 @@ const VideosList = () => {
   };
 
   useEffect(() => {
-    loadVideos();
-  }, []);
+    loadVideos(searchQuery);
+  }, [searchQuery]);
 
   const handlePlay = (id: string | undefined) => {
     setPlayingVideoId(id);

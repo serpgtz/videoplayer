@@ -1,21 +1,16 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
-import { getVideos} from "../Videos/videoService"
-import { Video } from '../Videos/video';
 
-const SearchForm = () => {
+const SearchForm = ({ onSearch }: { onSearch: (search: string) => void }) => {
   const [busqueda, setBusqueda] = useState<string>("");
-  const [videoBusqueda, setVideoBusqueda] = useState<Video[]>([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setBusqueda(e.target.value);
   };
 
-  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Aquí podrías manejar la lógica de búsqueda
-    const res = await getVideos(busqueda)
-    console.log("Buscando:", res);
+    onSearch(busqueda);
   };
 
   return (
@@ -35,7 +30,7 @@ const SearchForm = () => {
   );
 };
 
-const Navbar = () => {
+const Navbar = ({ onSearch }: { onSearch: (search: string) => void }) => {
   return (
     <nav className="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
       <div className="container-fluid">
@@ -73,7 +68,7 @@ const Navbar = () => {
             </ul>
           </div>
           <div className="col-auto">
-            <SearchForm />
+            <SearchForm onSearch={onSearch} />
           </div>
         </div>
       </div>
